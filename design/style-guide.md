@@ -13,17 +13,17 @@ The designs were created to the following widths:
 
 ### Primary
 
-- Purple 600: hsl(238, 40%, 52%)
+- Purple 600: hsl(238, 40%, 52%) #5457b6
 - Pink 400: hsl(358, 79%, 66%)
-- Purple 200: hsl(239, 57%, 85%)
+- Purple 200: hsl(239, 57%, 85%) #c3c4ef
 - Pink 200: hsl(357, 100%, 86%)
 
 ### Neutral
 
-- Grey 800: hsl(212, 24%, 26%)
-- Grey 500: hsl(211, 10%, 45%)
-- Grey 100: hsl(223, 19%, 93%)
-- Grey 50: hsl(228, 33%, 97%)
+- Grey 800: hsl(212, 24%, 26%) #324152
+- Grey 500: hsl(211, 10%, 45%) #67727e
+- Grey 100: hsl(223, 19%, 93%) #eaecf1
+- Grey 50: hsl(228, 33%, 97%) #f5f6fa
 - White: hsl(0, 100%, 100%)
 
 ## Typography
