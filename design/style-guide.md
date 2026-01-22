@@ -14,9 +14,9 @@ The designs were created to the following widths:
 ### Primary
 
 - Purple 600: hsl(238, 40%, 52%) #5457b6
-- Pink 400: hsl(358, 79%, 66%)
+- Pink 400: hsl(358, 79%, 66%) #ed6468
 - Purple 200: hsl(239, 57%, 85%) #c3c4ef
-- Pink 200: hsl(357, 100%, 86%)
+- Pink 200: hsl(357, 100%, 86%) #ffb8bb
 
 ### Neutral
 
