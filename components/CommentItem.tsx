@@ -1,4 +1,6 @@
+'use client';
 //Components
+import { useState } from "react";
 import Image from "next/image";
 
 interface CommentItemProp {
@@ -9,9 +11,14 @@ interface CommentItemProp {
     content: string;
     onDelete: () => void;
     isCurrentUser: boolean;
+    onEdit: (newContent: string) => void;
 }
 
-export default function CommentItem({ img, username, score, createdAt, content, isCurrentUser, onDelete }: CommentItemProp) {
+export default function CommentItem({ img, username, score, createdAt, content, isCurrentUser, onDelete, onEdit }: CommentItemProp) {
+    const [isEditing, setIsEditing] = useState(false);
+    const [editText, setEditText] = useState(content);
+
+    
     return (
         <div className={`rounded rounded-[10px] bg-white w-full flex p-4 gap-3`}>
             <div>
@@ -60,6 +67,7 @@ export default function CommentItem({ img, username, score, createdAt, content, 
                             </button>
                             <button 
                                 type="button"
+                                onClick={() => setIsEditing(true)}
                                 className="cursor-pointer ml-auto text-[#5457b6] font-semibold duration-500
                                             hover:text-[#c3c4ef]"
                             >
@@ -76,7 +84,31 @@ export default function CommentItem({ img, username, score, createdAt, content, 
                         </button>
                     }
                 </div>
-                <p className="text-[#67727e]">{content}</p>
+                {isEditing ? (
+                    <form 
+                        onSubmit={(e) => {
+                            e.preventDefault();
+                            onEdit(editText);
+                            setIsEditing(false);
+                        }}
+                        className="flex flex-col items-end gap-3"
+                    >
+                        <textarea 
+                            className="min-h-[100px] w-full border rounded px-3 py-2 text-[#67727e]" 
+                            value={editText} 
+                            placeholder="Edit your comment..."
+                            onChange={(e) => setEditText(e.target.value)}
+                        />
+                        <button 
+                            type="submit"
+                            className="bg-[#5457b6] text-white px-5 py-2 uppercase rounded-[10px] duration-500 hover:bg-[#c3c4ef]"
+                        >
+                            Update
+                        </button>
+                    </form>
+                ) : (
+                    <p className="text-[#67727e]">{content}</p>
+                )}
             </div>
         </div>
     );

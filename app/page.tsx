@@ -72,6 +72,16 @@ export default function Home() {
     setCommentText("");
   };
 
+  const handleEditComment = (id: number, newContent: string) => {
+    setComments(prev => 
+      prev.map(comment => 
+        comment.id === id
+        ? {...comment, content: newContent}
+        : comment
+      )
+    );
+  };
+
   const handleDeleteComment = (id: number) => {
     setComments(prev => prev.filter(comment => comment.id !== id));
   };
@@ -95,6 +105,7 @@ export default function Home() {
               content={comment.content}
               isCurrentUser={comment.user.username === currentUser.username}
               onDelete={() => handleDeleteComment(comment.id)}
+              onEdit={(newContent) => handleEditComment(comment.id, newContent)}
             />
 
             {comment.replies.length > 0 && (
