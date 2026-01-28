@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import CommentItem from "@/components/CommentItem";
+import CreateCommentItem from "@/components/CreateCommentItem";
 import data from '@/public/data/data.json';
 
 interface User {
@@ -126,33 +127,12 @@ export default function Home() {
             )}
           </div>
         ))}
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            handleAddComment();
-          }}
-          className="max-w-[50rem] w-full flex gap-4 items-start bg-white rounded rounded-[10px] p-4"
-        >
-          <Image 
-            src={currentUser.image.webp.replace("./", "/")}
-            alt="profile image"
-            width={35}
-            height={35}
-          />
-          <textarea 
-            value={commentText}
-            placeholder="Add a comment..."
-            onChange={(e) => setCommentText(e.target.value)}
-            className="min-h-[100px] text-[#67727e] flex-1 flex-grow rounded border px-3 py-2"
-          />
-          <button 
-            type="submit"
-            className="bg-[#5457b6] text-white px-5 py-2 uppercase rounded rounded-[10px] duration-500
-                        hover:bg-[#c3c4ef]"
-          >
-            Send
-          </button>
-        </form>
+        <CreateCommentItem 
+          handleAddComment={handleAddComment}
+          img={currentUser.image.webp.replace("./", "/")}
+          commentText={commentText}
+          setCommentText={setCommentText}
+        />
       </main>
     </div>
   );

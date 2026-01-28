@@ -2,6 +2,9 @@
 //Components
 import { useState } from "react";
 import Image from "next/image";
+//Icons
+import { FaReply, FaPen } from "react-icons/fa";
+import { MdDelete } from "react-icons/md";
 
 interface CommentItemProp {
     img: string;
@@ -60,27 +63,31 @@ export default function CommentItem({ img, username, score, createdAt, content, 
                             <button 
                                 type="button"
                                 onClick={onDelete}
-                                className="cursor-pointer ml-auto text-[#ed6468] font-semibold duration-500
-                                            hover:text-[#ffb8bb]"
+                                disabled={isEditing}
+                                className="cursor-pointer flex items-center gap-1 ml-auto text-[#ed6468] font-semibold duration-500
+                                            hover:text-[#ffb8bb]
+                                            disabled:text-[#ffb8bb]"
                             >
-                                Delete
+                                <MdDelete size={20} /> Delete
                             </button>
                             <button 
                                 type="button"
                                 onClick={() => setIsEditing(true)}
-                                className="cursor-pointer ml-auto text-[#5457b6] font-semibold duration-500
-                                            hover:text-[#c3c4ef]"
+                                disabled={isEditing}
+                                className="cursor-pointer flex items-center gap-1 ml-auto text-[#5457b6] font-semibold duration-500
+                                            hover:text-[#c3c4ef]
+                                            disabled:text-[#c3c4ef]"
                             >
-                                Edit
+                                <FaPen /> Edit
                             </button>
                         </div>
                         :
                         <button 
                             type="button"
-                            className="cursor-pointer ml-auto text-[#5457b6] font-semibold duration-500
+                            className="cursor-pointer flex items-center gap-2 ml-auto text-[#5457b6] font-semibold duration-500
                                         hover:text-[#c3c4ef]"
                         >
-                            Reply
+                            <FaReply /> Reply
                         </button>
                     }
                 </div>
@@ -101,7 +108,8 @@ export default function CommentItem({ img, username, score, createdAt, content, 
                         />
                         <button 
                             type="submit"
-                            className="bg-[#5457b6] text-white px-5 py-2 uppercase rounded-[10px] duration-500 hover:bg-[#c3c4ef]"
+                            className="cursor-pointer bg-[#5457b6] text-white px-5 py-2 uppercase rounded-[10px] duration-500 
+                                        hover:bg-[#c3c4ef]"
                         >
                             Update
                         </button>
