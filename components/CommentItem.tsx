@@ -15,13 +15,13 @@ interface CommentItemProp {
     onDelete: () => void;
     isCurrentUser: boolean;
     onEdit: (newContent: string) => void;
+    onReplyClick?: () => void;
 }
 
-export default function CommentItem({ img, username, score, createdAt, content, isCurrentUser, onDelete, onEdit }: CommentItemProp) {
-    const [isEditing, setIsEditing] = useState(false);
-    const [editText, setEditText] = useState(content);
+export default function CommentItem({ img, username, score, createdAt, content, isCurrentUser, onDelete, onEdit, onReplyClick }: CommentItemProp) {
+    const [isEditing, setIsEditing] = useState<boolean>(false);
+    const [editText, setEditText] = useState<string>(content);
 
-    
     return (
         <div className={`rounded rounded-[10px] bg-white w-full flex p-4 gap-3`}>
             <div>
@@ -84,6 +84,7 @@ export default function CommentItem({ img, username, score, createdAt, content, 
                         :
                         <button 
                             type="button"
+                            onClick={onReplyClick}
                             className="cursor-pointer flex items-center gap-2 ml-auto text-[#5457b6] font-semibold duration-500
                                         hover:text-[#c3c4ef]"
                         >

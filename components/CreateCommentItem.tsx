@@ -5,9 +5,10 @@ interface CreateCommentItemProps {
     img: string;
     commentText: string;
     setCommentText: (commentText: string) => void;
+    isReply?: boolean;
 }
 
-export default function CreateCommentItem ({ handleAddComment, img, commentText, setCommentText }: CreateCommentItemProps) {
+export default function CreateCommentItem ({ handleAddComment, img, commentText, setCommentText, isReply }: CreateCommentItemProps) {
     return (
         <form
           onSubmit={(e) => {
@@ -33,7 +34,7 @@ export default function CreateCommentItem ({ handleAddComment, img, commentText,
             className="cursor-pointer bg-[#5457b6] text-white px-5 py-2 uppercase rounded rounded-[10px] duration-500
                         hover:bg-[#c3c4ef]"
           >
-            Send
+            {isReply ? "Reply" : "Send"}
           </button>
         </form>
     );
