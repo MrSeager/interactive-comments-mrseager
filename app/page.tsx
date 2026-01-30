@@ -1,9 +1,9 @@
 'use client';
 //Components
-import Image from "next/image";
 import { useState, useEffect } from "react";
 import CommentItem from "@/components/CommentItem";
 import CreateCommentItem from "@/components/CreateCommentItem";
+import DeletePanel from "@/components/DeletePanel";
 import data from '@/public/data/data.json';
 
 interface User {
@@ -19,8 +19,8 @@ interface Reply {
   content: string; 
   createdAt: string; 
   score: number; 
-  replyingTo?: string; 
   user: User; 
+  replyingTo?: string; 
 }
 
 interface Comment {
@@ -37,19 +37,37 @@ interface CommentsData {
   comments: Comment[];
 }
 
+type DeleteTarget =
+  | { type: "comment"; commentId: number }
+  | { type: "reply"; commentId: number; replyId: number };
+
+function generateId() {
+   return Math.floor(Math.random() * 1_000_000_000);
+}
+
 export default function Home() {
   const { currentUser, comments: initialComments } = data as CommentsData;
-  const [isClient, setIsClient] = useState<boolean>(false);
-  const [comments, setComments] = useState<Comment[]>(() => {
-    if (typeof window !== "undefined") {
-      const stored = localStorage.getItem("comments");
-      if (stored) return JSON.parse(stored);
+  //const [isClient, setIsClient] = useState<boolean>(false);
+  const [comments, setComments] = useState<Comment[]>(initialComments);
+
+  useEffect(() => {
+    const stored = localStorage.getItem("comments");
+    if (stored) {
+      Promise.resolve().then(() => {
+        setComments(JSON.parse(stored));
+      });
     }
-    return initialComments;
-  });
+  }, []);
+
   const [commentText, setCommentText] = useState<string>('');
   const [replyText, setReplyText] = useState<string>("");
   const [replyingToId, setReplyingToId] = useState<number | null>(null);
+
+  const [isDeleteOpen, setIsDeleteOpen] = useState<boolean>(false);
+  const [deleteTarget, setDeleteTarget] = useState<DeleteTarget>({
+    type: "comment",
+    commentId: -1
+  });
 
   useEffect(() => {
     if (comments.length > 0) {
@@ -61,7 +79,7 @@ export default function Home() {
     if (!commentText.trim()) return;
 
     const newComment: Comment = {
-      id: Math.floor(Math.random() * 1_000_000_000),
+      id: generateId(),
       content: commentText,
       createdAt: "now",
       score: 0,
@@ -77,7 +95,7 @@ export default function Home() {
     if (!replyText.trim()) return;
 
     const newReply: Reply = {
-      id: Math.floor(Math.random() * 1_000_000_000),
+      id: generateId(),
       content: replyText,
       createdAt: "now",
       score: 0,
@@ -138,15 +156,15 @@ export default function Home() {
     );
   };
 
-  useEffect(() => {
+  /*useEffect(() => {
     setIsClient(true);
   }, []);
 
-  if (!isClient) return null;
+  if (!isClient) return null;*/
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#f5f6fa] font-sans">
-      <main className="flex flex-col justify-start py-5 items-center gap-3 min-h-screen w-full max-w-[120rem]">
+      <main className="relevant flex flex-col justify-start py-5 items-center gap-3 min-h-screen w-full max-w-[120rem]">
         {comments.map((comment) => (
           <div key={comment.id} className="max-w-[50rem] w-full">
             {/* MAIN COMMENT */}
@@ -157,7 +175,10 @@ export default function Home() {
               createdAt={comment.createdAt}
               content={comment.content}
               isCurrentUser={comment.user.username === currentUser.username}
-              onDelete={() => handleDeleteComment(comment.id)}
+              onDelete={() => { 
+                setDeleteTarget({ type: "comment", commentId: comment.id }); 
+                setIsDeleteOpen(true);
+              }}
               onEdit={(newContent) => handleEditComment(comment.id, newContent)}
               onReplyClick={() => {
                 setReplyingToId(comment.id);
@@ -178,7 +199,10 @@ export default function Home() {
                     createdAt={reply.createdAt}
                     content={reply.content}
                     isCurrentUser={reply.user.username === currentUser.username}
-                    onDelete={() => handleDeleteReply(comment.id, reply.id)}
+                    onDelete={() => { 
+                      setDeleteTarget({ type: "reply", commentId: comment.id, replyId: reply.id }); 
+                      setIsDeleteOpen(true); 
+                    }}
                     onReplyClick={() => {
                       setReplyingToId(comment.id);
                       setReplyText(`@${reply.user.username}, `);
@@ -229,6 +253,19 @@ export default function Home() {
           commentText={commentText}
           setCommentText={setCommentText}
         />
+        {isDeleteOpen && (
+          <DeletePanel
+            onCancel={() => setIsDeleteOpen(false)}
+            onConfirm={() => {
+              if (deleteTarget.type === "comment") {
+                handleDeleteComment(deleteTarget.commentId);
+              } else {
+                handleDeleteReply(deleteTarget.commentId, deleteTarget.replyId);
+              }
+              setIsDeleteOpen(false);
+            }}
+          />
+        )}
       </main>
     </div>
   );
