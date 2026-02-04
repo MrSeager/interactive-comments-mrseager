@@ -21,6 +21,7 @@ interface Reply {
   score: number; 
   user: User; 
   replyingTo?: string; 
+  userVote: "up" | "down" | null;
 }
 
 interface Comment {
@@ -30,6 +31,7 @@ interface Comment {
   score: number;
   user: User;
   replies: Reply[];
+  userVote: "up" | "down" | null;
 }
 
 interface CommentsData {
@@ -47,14 +49,30 @@ function generateId() {
 
 export default function Home() {
   const { currentUser, comments: initialComments } = data as CommentsData;
-  //const [isClient, setIsClient] = useState<boolean>(false);
-  const [comments, setComments] = useState<Comment[]>(initialComments);
+  const [comments, setComments] = useState<Comment[]>(() =>
+    initialComments.map(c => ({
+      ...c,
+      userVote: null,
+      replies: c.replies.map(r => ({ ...r, userVote: null }))
+    }))
+  );
 
   useEffect(() => {
     const stored = localStorage.getItem("comments");
     if (stored) {
-      Promise.resolve().then(() => {
-        setComments(JSON.parse(stored));
+      const parsed = JSON.parse(stored);
+
+      const normalized = parsed.map((c: Comment) => ({
+        ...c,
+        userVote: c.userVote ?? null,
+        replies: c.replies.map((r: Reply) => ({
+          ...r,
+          userVote: r.userVote ?? null
+        }))
+      }));
+
+      queueMicrotask(() => {
+        setComments(normalized);
       });
     }
   }, []);
@@ -84,7 +102,8 @@ export default function Home() {
       createdAt: "now",
       score: 0,
       user: currentUser,
-      replies: []
+      replies: [],
+      userVote: null
     };
 
     setComments(prev => [...prev, newComment]);
@@ -100,7 +119,8 @@ export default function Home() {
       createdAt: "now",
       score: 0,
       user: currentUser,
-      replyingTo: "", // optional, you can fill this later
+      replyingTo: "",
+      userVote: null
     };
 
     setComments(prev =>
@@ -155,16 +175,162 @@ export default function Home() {
       )
     );
   };
+  
+  function resolveVote(
+    currentVote: "up" | "down" | null,
+    direction: "up" | "down",
+    score: number
+  ) {
+    if (currentVote === direction) {
+      return { score: score + (direction === "up" ? -1 : 1), vote: null };
+    }
 
-  /*useEffect(() => {
-    setIsClient(true);
-  }, []);
+    if (currentVote === null) {
+      return { score: score + (direction === "up" ? 1 : -1), vote: direction };
+    }
 
-  if (!isClient) return null;*/
+    return {
+      score: score + (direction === "up" ? 2 : -2),
+      vote: direction
+    };
+  }
+
+  /*const handleVote = (commentId: number, direction: "up" | "down") => {
+    setComments(prev =>
+      prev.map(comment => {
+        if (comment.id !== commentId) return comment;
+
+        let newScore = comment.score;
+        let newVote = comment.userVote;
+
+        if (direction === "up") {
+          if (comment.userVote === "up") {
+            // undo upvote
+            newScore -= 1;
+            newVote = null;
+          } else if (comment.userVote === "down") {
+            // switch from down → up
+            newScore += 2;
+            newVote = "up";
+          } else {
+            // normal upvote
+            newScore += 1;
+            newVote = "up";
+          }
+        }
+
+        if (direction === "down") {
+          if (comment.userVote === "down") {
+            // undo downvote
+            newScore += 1;
+            newVote = null;
+          } else if (comment.userVote === "up") {
+            // switch from up → down
+            newScore -= 2;
+            newVote = "down";
+          } else {
+            // normal downvote
+            newScore -= 1;
+            newVote = "down";
+          }
+        }
+
+        return { ...comment, score: newScore, userVote: newVote };
+      })
+    );
+  };*/
+
+  const handleVote = (commentId: number, direction: "up" | "down") => {
+    setComments(prev =>
+      prev.map(comment => {
+        if (comment.id !== commentId) return comment;
+
+        const { score, vote } = resolveVote(
+          comment.userVote,
+          direction,
+          comment.score
+        );
+
+        return { ...comment, score, userVote: vote };
+      })
+    );
+  };
+
+  /*const handleReplyVote = (commentId: number, replyId: number, direction: "up" | "down") => {
+    setComments(prev =>
+      prev.map(comment => {
+        if (comment.id !== commentId) return comment;
+
+        return {
+          ...comment,
+          replies: comment.replies.map(reply => {
+            if (reply.id !== replyId) return reply;
+
+            let newScore = reply.score;
+            let newVote = reply.userVote;
+
+            if (direction === "up") {
+              if (reply.userVote === "up") {
+                newScore -= 1;
+                newVote = null;
+              } else if (reply.userVote === "down") {
+                newScore += 2;
+                newVote = "up";
+              } else {
+                newScore += 1;
+                newVote = "up";
+              }
+            }
+
+            if (direction === "down") {
+              if (reply.userVote === "down") {
+                newScore += 1;
+                newVote = null;
+              } else if (reply.userVote === "up") {
+                newScore -= 2;
+                newVote = "down";
+              } else {
+                newScore -= 1;
+                newVote = "down";
+              }
+            }
+
+            return { ...reply, score: newScore, userVote: newVote };
+          })
+        };
+      })
+    );
+  };*/
+  const handleReplyVote = (
+    commentId: number,
+    replyId: number,
+    direction: "up" | "down"
+  ) => {
+    setComments(prev =>
+      prev.map(comment => {
+        if (comment.id !== commentId) return comment;
+
+        return {
+          ...comment,
+          replies: comment.replies.map(reply => {
+            if (reply.id !== replyId) return reply;
+
+            const { score, vote } = resolveVote(
+              reply.userVote,
+              direction,
+              reply.score
+            );
+
+            return { ...reply, score, userVote: vote };
+          })
+        };
+      })
+    );
+  };
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#f5f6fa] font-sans">
-      <main className="relevant flex flex-col justify-start py-5 items-center gap-3 min-h-screen w-full max-w-[120rem]">
+      <main className="relevant flex flex-col justify-start py-5 items-center gap-3 min-h-screen w-full max-w-[120rem] px-3">
         {comments.map((comment) => (
           <div key={comment.id} className="max-w-[50rem] w-full">
             {/* MAIN COMMENT */}
@@ -184,6 +350,9 @@ export default function Home() {
                 setReplyingToId(comment.id);
                 setReplyText(`@${comment.user.username}, `);
               }}
+              onUpvote={() => handleVote(comment.id, "up")}
+              onDownvote={() => handleVote(comment.id, "down")}
+              userVote={comment.userVote}
             />
 
             {/* CASE 1: There ARE replies */}
@@ -208,6 +377,9 @@ export default function Home() {
                       setReplyText(`@${reply.user.username}, `);
                     }}
                     onEdit={(newContent) => handleEditReply(comment.id, reply.id, newContent)}
+                    onUpvote={() => handleReplyVote(comment.id, reply.id, "up")}
+                    onDownvote={() => handleReplyVote(comment.id, reply.id, "down")}
+                    userVote={reply.userVote}
                   />
                 ))}
 
