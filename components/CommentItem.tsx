@@ -6,21 +6,8 @@ import Scorehandler from "./ScoreHandler";
 //Icons
 import { FaReply, FaPen } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
-
-interface CommentItemProp {
-    img: string;
-    username: string;
-    score: number;
-    createdAt: string;
-    content: string;
-    onDelete: () => void;
-    isCurrentUser: boolean;
-    onEdit: (newContent: string) => void;
-    onReplyClick?: () => void;
-    onUpvote: () => void;
-    onDownvote: () => void;
-    userVote: "up" | "down" | null;
-}
+//Types
+import { CommentItemProp } from "@/types/types";
 
 export default function CommentItem({ 
                                         img, username, score, createdAt, content, isCurrentUser, userVote,

@@ -1,9 +1,5 @@
-interface ScorehandlerProps {
-    onUpvote: () => void;
-    onDownvote: () => void;
-    userVote: "up" | "down" | null;
-    score: number;
-}
+//Types
+import { ScorehandlerProps } from "@/types/types";
 
 export default function Scorehandler({ onUpvote, onDownvote, userVote, score }: ScorehandlerProps) {
     return (

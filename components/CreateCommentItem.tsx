@@ -1,13 +1,7 @@
 //Components
 import Image from "next/image";
-
-interface CreateCommentItemProps {
-    handleAddComment: () => void;
-    img: string;
-    commentText: string;
-    setCommentText: (commentText: string) => void;
-    isReply?: boolean;
-}
+//Types
+import { CreateCommentItemProps } from "@/types/types";
 
 export default function CreateCommentItem ({ handleAddComment, img, commentText, setCommentText, isReply }: CreateCommentItemProps) {
   return (

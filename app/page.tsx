@@ -5,8 +5,10 @@ import CommentItem from "@/components/CommentItem";
 import CreateCommentItem from "@/components/CreateCommentItem";
 import DeletePanel from "@/components/DeletePanel";
 import data from '@/public/data/data.json';
+//Types
+import { Reply, Comment, CommentsData, DeleteTarget } from "@/types/types";
 
-interface User {
+/*interface User {
     image: { 
       png: string;
       webp: string;
@@ -42,7 +44,7 @@ interface CommentsData {
 type DeleteTarget =
   | { type: "comment"; commentId: number }
   | { type: "reply"; commentId: number; replyId: number };
-
+*/
 function generateId() {
    return Math.floor(Math.random() * 1_000_000_000);
 }

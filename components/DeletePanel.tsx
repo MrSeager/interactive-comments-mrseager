@@ -1,7 +1,5 @@
-interface DeletePanelProps {
-    onCancel: () => void;
-    onConfirm: () => void;
-}
+//Types
+import { DeletePanelProps } from "@/types/types";
 
 export default function DeletePanel({ onCancel, onConfirm }: DeletePanelProps) {
     return(
