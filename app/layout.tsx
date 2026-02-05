@@ -15,6 +15,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Interactive comments section",
   description: "Interactive comments section created using Next.JS, TypeScript and Tailwind",
+  icons: { 
+    icon: "/favicon-32x32.png", 
+  },
   openGraph: {
     title: "Interactive comments section",
     description: "Interactive comments section created using Next.JS, TypeScript and Tailwind",
