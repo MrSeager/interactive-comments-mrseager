@@ -193,52 +193,7 @@ export default function Home() {
       score: score + (direction === "up" ? 2 : -2),
       vote: direction
     };
-  }
-
-  /*const handleVote = (commentId: number, direction: "up" | "down") => {
-    setComments(prev =>
-      prev.map(comment => {
-        if (comment.id !== commentId) return comment;
-
-        let newScore = comment.score;
-        let newVote = comment.userVote;
-
-        if (direction === "up") {
-          if (comment.userVote === "up") {
-            // undo upvote
-            newScore -= 1;
-            newVote = null;
-          } else if (comment.userVote === "down") {
-            // switch from down → up
-            newScore += 2;
-            newVote = "up";
-          } else {
-            // normal upvote
-            newScore += 1;
-            newVote = "up";
-          }
-        }
-
-        if (direction === "down") {
-          if (comment.userVote === "down") {
-            // undo downvote
-            newScore += 1;
-            newVote = null;
-          } else if (comment.userVote === "up") {
-            // switch from up → down
-            newScore -= 2;
-            newVote = "down";
-          } else {
-            // normal downvote
-            newScore -= 1;
-            newVote = "down";
-          }
-        }
-
-        return { ...comment, score: newScore, userVote: newVote };
-      })
-    );
-  };*/
+  };
 
   const handleVote = (commentId: number, direction: "up" | "down") => {
     setComments(prev =>
@@ -256,51 +211,6 @@ export default function Home() {
     );
   };
 
-  /*const handleReplyVote = (commentId: number, replyId: number, direction: "up" | "down") => {
-    setComments(prev =>
-      prev.map(comment => {
-        if (comment.id !== commentId) return comment;
-
-        return {
-          ...comment,
-          replies: comment.replies.map(reply => {
-            if (reply.id !== replyId) return reply;
-
-            let newScore = reply.score;
-            let newVote = reply.userVote;
-
-            if (direction === "up") {
-              if (reply.userVote === "up") {
-                newScore -= 1;
-                newVote = null;
-              } else if (reply.userVote === "down") {
-                newScore += 2;
-                newVote = "up";
-              } else {
-                newScore += 1;
-                newVote = "up";
-              }
-            }
-
-            if (direction === "down") {
-              if (reply.userVote === "down") {
-                newScore += 1;
-                newVote = null;
-              } else if (reply.userVote === "up") {
-                newScore -= 2;
-                newVote = "down";
-              } else {
-                newScore -= 1;
-                newVote = "down";
-              }
-            }
-
-            return { ...reply, score: newScore, userVote: newVote };
-          })
-        };
-      })
-    );
-  };*/
   const handleReplyVote = (
     commentId: number,
     replyId: number,
