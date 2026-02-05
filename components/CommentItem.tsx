@@ -19,7 +19,7 @@ interface CommentItemProp {
     onReplyClick?: () => void;
     onUpvote: () => void;
     onDownvote: () => void;
-    userVote?: "up" | "down" | null;
+    userVote: "up" | "down" | null;
 }
 
 export default function CommentItem({ 
